@@ -19,8 +19,26 @@ const reactionSchema = new Schema(
             type: Date,
             default: Date.now,
             // Getter Method
+            get: function (createdAt) {
+                const options = {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true,
+                };
+                return createdAt.toLocaleString('en-US', options);
+            },
         }
-    } 
+    },
+    {
+        toJSON: {
+          getters: true,
+        },
+        id: false,
+      }
 )
 
 module.exports = reactionSchema;

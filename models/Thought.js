@@ -11,15 +11,34 @@ const thoughtSchema = new Schema(
         },
         createdAt: {
             type: Date,
-            default: Date.now
+            default: Date.now,
             // Getter method
+            get: function (createdAt) {
+                const options = {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true,
+                };
+                return createdAt.toLocaleString('en-US', options);
+            },
         },
         username: {
             type: String,
             required: true
         },
         reactions: [reactionSchema]
-    } // Insert Virtual
+    }, // Insert Virtual
+    {
+        toJSON: {
+            virtuals: true,
+            getters: true,
+        },
+        id: false,
+    }
 )
 /*
 thoughtText
@@ -48,7 +67,11 @@ Schema Settings:
     Create a virtual called reactionCount that retrieves the length of the
     thought's reactions array field on query.
 */
-
+thoughtSchema
+    .virtual('reactionCount')
+    .get(function () {
+        return this.reactions.length
+    })
 
 const Thought = model('thought', thoughtSchema);
 
