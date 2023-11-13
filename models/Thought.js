@@ -3,12 +3,14 @@ const reactionSchema = require('./Reaction');
 
 const thoughtSchema = new Schema(
     {
+        // The text contained within the post
         thoughtText: {
             type: String,
             required: true,
             minlength: 1,
             maxlength: 280,
         },
+        // Date it was created (formatted with getter)
         createdAt: {
             type: Date,
             default: Date.now,
@@ -26,13 +28,14 @@ const thoughtSchema = new Schema(
                 return createdAt.toLocaleString('en-US', options);
             },
         },
+        // user the thought is attributed to
         username: {
             type: String,
             required: true
         },
         reactions: [reactionSchema]
-    }, // Insert Virtual
-    {
+    }, 
+    { // Insert Virtual
         toJSON: {
             virtuals: true,
             getters: true,
@@ -67,6 +70,7 @@ Schema Settings:
     Create a virtual called reactionCount that retrieves the length of the
     thought's reactions array field on query.
 */
+// Virtual that displays the total amount of reactions on a thought
 thoughtSchema
     .virtual('reactionCount')
     .get(function () {

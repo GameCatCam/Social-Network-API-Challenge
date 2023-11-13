@@ -1,6 +1,8 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
+// All logic for routes featured in /routes/api/userRoutes.js
 module.exports = {
+    // gets all users and displays them in json
     async getUser(req, res) {
         try {
             const users = await User.find();
@@ -11,6 +13,7 @@ module.exports = {
             return res.status(500).json(err)
         }
     },
+    // gets a single user and displays them in json with their friend and thought data
     async getSingleUser(req, res) { // populate with friend and thought data
         try {
             const user = await User.findOne({ _id: req.params.userId })
@@ -33,6 +36,7 @@ module.exports = {
             return res.status(500).json(err)
         }
     },
+    // Creates a new user
     async createUser(req, res) {
         try {
             const user = await User.create(req.body);
@@ -42,6 +46,7 @@ module.exports = {
             return res.status(500).json(err)
         }
     },
+    // Deletes a user
     async deleteUser(req, res) {
         try {
             const user = await User.findOneAndRemove({ _id: req.params.userId });
@@ -51,13 +56,15 @@ module.exports = {
             }
 
             // Remove associated thoughts!
+            await Thought.deleteMany({ username: user.username });
 
-            res.json({ message: 'User successfully deleted!' })
+            res.json({ message: 'User and thoughts successfully deleted!' })
         } catch (err) {
             console.log(err)
             res.status(500).json(err)
         }
     },
+    // Updates a user's information
     async updateUser(req, res) {
         try {
             const user = await User.findOneAndUpdate(
@@ -75,6 +82,7 @@ module.exports = {
             res.status(500).json(err)
         }
     },
+    // Adds a friend to a user and the friend's friend list
     async addFriend(req, res) {
         try {
             const user = await User.findOneAndUpdate(
@@ -83,16 +91,26 @@ module.exports = {
                 { new: true }
             )
 
+            await User.findOneAndUpdate(
+                { _id: req.params.friendId },
+                { $addToSet: { friends: req.params.userId } },
+                { new: true }
+            )
+
             if (!user) {
                 return res.status(404).json({ message: 'User does not exist' })
             }
 
-            res.json(user)
+            res.json({
+                user,
+                message: "Friend added to user and friend's lists."
+            })
         } catch (err) {
             console.log(err)
             res.status(500).json(err)
         }
     },
+    // Deletes a friend from a user and a friends friend list
     async deleteFriend(req, res) {
         try {
             const user = await User.findOneAndUpdate(
@@ -101,11 +119,20 @@ module.exports = {
                 { new: true }
             )
 
+            await User.findOneAndUpdate(
+                { _id: req.params.friendId },
+                { $pull: { friends: { _id: req.params.userId } } },
+                { new: true }
+            )
+
             if (!user) {
                 return res.status(404).json({ message: 'User does not exist' })
             }
 
-            res.json(user)
+            res.json({
+                user,
+                message: "Friend removed from user and friend's lists."
+            })
         } catch (err) {
             console.log(err)
             res.status(500).json(err)
@@ -113,7 +140,7 @@ module.exports = {
     }
 }
 
-/*
+/* This is the structure for the userRoutes
 /api/users
 
     GET all users
@@ -127,9 +154,7 @@ module.exports = {
     DELETE to remove user by its _id
 
     BONUS: Remove a user's associated thoughts when deleted.
-*/
 
-/* 
 /api/users/:userId/friends/:friendId
 
     POST to add a new friend to a user's friend list

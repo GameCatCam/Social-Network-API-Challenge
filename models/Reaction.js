@@ -2,19 +2,23 @@ const { Schema, Types } = require('mongoose');
 
 const reactionSchema = new Schema(
     {
+        // Creates an ID for which we can call reactions from
         reactionId: {
             type: Schema.Types.ObjectId,
             default: () => new Types.ObjectId(),
         },
+        // The text contained within.
         reactionBody: {
             type: String,
             required: true,
             maxlength: 280,
         },
+        // User to attribute the reaction to
         username: {
             type: String,
             required: true,
         },
+        // Date it was created and formatted to read better
         createdAt: {
             type: Date,
             default: Date.now,

@@ -1,6 +1,7 @@
 const { User, Thought } = require('../models');
 
 module.exports = {
+    // Gets all thoughts from the DB
     async getThoughts(req, res) {
         try {
             const thoughts = await Thought.find();
@@ -10,6 +11,7 @@ module.exports = {
             return res.status(500).json(err);
         }
     },
+    // Gets a single thought from the DB based on an id query
     async getSingleThought(req, res) {
         try {
             const thought = await Thought.findOne({ _id: req.params.thoughtId })
@@ -25,6 +27,7 @@ module.exports = {
             return res.status(500).json(err);
         }
     },
+    // Creates a new thought and adds it to the user's thoughts array
     async createThought(req, res) {
         try {
             const thought = await Thought.create(req.body);
@@ -44,6 +47,7 @@ module.exports = {
             return res.status(500).json(err)
         }
     },
+    // Updates a user's thought
     async updateThought(req, res) {
         try {
             const thought = await Thought.findOneAndUpdate(
@@ -62,6 +66,7 @@ module.exports = {
             return res.status(500).json(err)
         }
     },
+    // Deletes a user's thought and removes it from the user's thoughts array
     async deleteThought(req, res) {
         try {
             const thought = await Thought.findOne({ _id: req.params.thoughtId });
@@ -94,6 +99,7 @@ module.exports = {
             return res.status(500).json(err)
         }
     }, 
+    // Creates a new reaction and applies it to a thoughts reactions array
     async createReaction(req, res) {
         try {
             const thought = await Thought.findOneAndUpdate(
@@ -112,6 +118,7 @@ module.exports = {
             return res.status(500).json(err)
         }
     },
+    // deletes a reaction
     async deleteReaction(req, res) {
         try {
             const thought = await Thought.findOneAndUpdate(
@@ -132,7 +139,7 @@ module.exports = {
     }
 }
 
-/*
+/* This is the structure for the thoughtRoutes
 /api/thoughts
 
     GET to get all thoughts
