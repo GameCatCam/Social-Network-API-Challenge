@@ -21,7 +21,7 @@ The application may be installed by downloading the repo and running npm install
 
 This application is just a showcase of Mongoose and is really only intended to display it's capabilities.
 
-[Here]() is a video tutorial on how to use this application.
+[Here](https://drive.google.com/file/d/1SwjE6Nc1f-MTr9yRc85H8HStJeOKf7w4/view) is a video tutorial on how to use this application.
 
 ## License
 
