@@ -115,13 +115,13 @@ module.exports = {
         try {
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $pull: { friends: { _id: req.params.friendId } } },
+                { $pull: { friends: req.params.friendId } },
                 { new: true }
             )
 
             await User.findOneAndUpdate(
                 { _id: req.params.friendId },
-                { $pull: { friends: { _id: req.params.userId } } },
+                { $pull: { friends: req.params.userId } },
                 { new: true }
             )
 
