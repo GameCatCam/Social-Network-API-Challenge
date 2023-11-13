@@ -14,7 +14,8 @@ module.exports = {
     async getSingleUser(req, res) { // populate with friend and thought data
         try {
             const user = await User.findOne({ _id: req.params.userId })
-                .select('__v');
+                .populate('friends', 'username')
+                .populate('thoughts', 'thoughtText');
 
             if (!user) {
                 return res.status(404).json({ message: 'No user with that ID' })
@@ -31,7 +32,8 @@ module.exports = {
             const user = await User.create(req.body);
             res.json(user)
         } catch (err) {
-            res.status(500).json(err)
+            console.log(err)
+            return res.status(500).json(err)
         }
     },
     async deleteUser(req, res) {
@@ -54,7 +56,8 @@ module.exports = {
         try {
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { /*other logic*/ }
+                { $set: req.body },
+                { runValidators: true, new: true }
             );
 
             if (!user) {
@@ -70,7 +73,7 @@ module.exports = {
         try {
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $addtoSet: { friends: req.params.friendId } },
+                { $addToSet: { friends: req.params.friendId } },
                 { new: true }
             )
 
